@@ -37,24 +37,36 @@ mongoose.connect(MONGODB_URI);
 // A GET route for scraping the echoJS website
 app.get("/scrape", function(req, res) {
   // First, we grab the body of the html with axios
-  axios.get("http://www.echojs.com/").then(function(response) {
+  axios.get("https://abcnews.go.com/Politics").then(function(response) {
        // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(response.data);
 
     // Now, we grab every h2 within an article tag, and do the following:
-    $("article h2").each(function(i, element) {
+    $(".tag-block").each(function(i, element) {
       // Save an empty result object
       var result = {};
 
       // Add the text and href of every link, and save them as properties of the result object
       result.title = $(this)
-        .children("a")
-        .text();
+        .find("a")
+        .text().trim();
       result.link = $(this)
-        .children("a")
+        .find("a")
         .attr("href");
+      result.summary = $(this)
+        .find(".desc")
+        .text().trim();
+      result.picture = $(this)
+        .find("img")
+        .attr("data-src");
 
-      // Create a new Article using the `result` object built from scraping
+
+
+        console.log("title:", result.title,  "    link:", result.link, "summary: ", result.summary,
+        "picture:", result.picture)
+
+  //    Create a new Article using the `result` object built from scraping
+  if (result.summary !== ""){
       db.Article.create(result)
         .then(function(dbArticle) {
           // View the added result in the console
@@ -64,6 +76,7 @@ app.get("/scrape", function(req, res) {
           // If an error occurred, log it
           console.log(err);
         });
+      }
     });
 
     // Send a message to the client
