@@ -11,7 +11,7 @@ var cheerio = require("cheerio");
 // Require all models
 var db = require("./models");
 
-var PORT = process.env.PORT||"3000";
+var PORT = process.env.PORT || 3000;
 
 // Initialize Express
 var app = express();
@@ -60,10 +60,10 @@ app.get("/scrape", function(req, res) {
         .find("img")
         .attr("data-src");
 
-
-
-        console.log("title:", result.title,  "    link:", result.link, "summary: ", result.summary,
-        "picture:", result.picture)
+        console.log("title:", result.title, "\n",
+        "link:", result.link, "\n",
+        "summary: ", result.summary, "\n",
+        "picture: ", result.picture, "\n")
 
   //    Create a new Article using the `result` object built from scraping
   if (result.summary !== ""){
